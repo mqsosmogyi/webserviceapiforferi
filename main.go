@@ -7,16 +7,16 @@ import (
 	"html/template"
 	"net/http"
 
-	//"os"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var router *chi.Mux
-var db *sql.DB
+var (
+	router *chi.Mux
+	db     *sql.DB
+)
 
 type Item struct {
 	Id   int    `json:"id"`
@@ -31,23 +31,19 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	handleErr(err)
 	defer rows.Close()
 
-	var content []Item
+	content := []Item{}
 
 	for rows.Next() {
 
-		var Task Item
-		var Id Item
+		cont := Item{}
 
-		err := rows.Scan(&Id.Id, &Task.Task)
+		err := rows.Scan(&cont.Id, &cont.Task)
 		handleErr(err)
 
-		//save := fmt.Sprint(Id, Task)
-		//fmt.Println(save)
-
-		content = append(content, Task)
-
+		content = append(content, cont)
 	}
 
+	fmt.Println(content)
 	t := template.Must(template.ParseFiles("index.html"))
 	t.Execute(w, content)
 
@@ -95,7 +91,6 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	defer delete.Close()
 
 	w.Write([]byte("Task Deleted!"))
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +116,7 @@ func init() {
 
 func main() {
 
-	router.Delete("/test/{id}", deleteTask)
+	router.Delete("/delete/{id}", deleteTask)
 	router.Post("/test", createTask)
 	router.Get("/", getTasks)
 
