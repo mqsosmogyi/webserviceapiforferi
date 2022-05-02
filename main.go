@@ -23,8 +23,6 @@ type Item struct {
 	Task string `json:"task`
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := db.Query("SELECT id, task FROM user2")
@@ -51,8 +49,6 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 func createTask(w http.ResponseWriter, r *http.Request) {
 
 	var task Item
@@ -74,8 +70,6 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(name))
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
@@ -92,8 +86,6 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("Task Deleted!"))
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func handleErr(err error) {
 
