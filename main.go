@@ -129,7 +129,7 @@ func main() {
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 	router.Delete("/todo/{id}", deleteTask)
 	router.Post("/todo", createTask)
-	router.Get("/todo", getTasks)
+	router.Get("/", getTasks)
 
 	fmt.Println("Listening...")
 	http.ListenAndServe(":3000", router)
