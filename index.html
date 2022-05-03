@@ -23,8 +23,10 @@
 <div class="text-center">
   <h1 style="font-size:8vw; color: whitesmoke" >TO-DO</h1>
   <div class="form-group">
-    <label style="font-size:2vw; color: whitesmoke" for="usr">Enter Task:</label>
-    <input type="text" class="form-control" id="usr">
+    <form action="/test" method="POST">
+        <input class="form-control" type="text" id="nameID" name="nameName" value="" placeholder="Enter Task"><br>
+        <button type="submit" class="btn btn-success mb-2">Submit Task</button>
+</form>
   </div>
 </div>
   
@@ -32,11 +34,8 @@
     <thead>
     <tr>
       <td>ID</td>
-      <td>Name</td>
+      <td>Tasks</td>
 
-
-
-      <td>Delete</td>
     </tr>
      </thead>
      <tbody>
@@ -44,8 +43,9 @@
     <tr>
       <td>{{ .Id }}</td>
       <td> {{ .Task }} </td>
-      <td><a href="/delete?id={{ .Id }}">Delete</a><td></td>
-
+      <td>
+        <a href="/delete/{{.Id}}">Delete</a></a>
+      </td>
     </tr>
   {{ end }}
      </tbody>
