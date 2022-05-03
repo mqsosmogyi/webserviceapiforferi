@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/render"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -22,6 +23,8 @@ type Item struct {
 	Id   int    `json:"id"`
 	Task string `json:"task`
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func getTasks(w http.ResponseWriter, r *http.Request) {
 
@@ -41,19 +44,31 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 		content = append(content, cont)
 	}
 
-	fmt.Println(content)
+	new := []Item{}
+
+	for i := len(content) - 1; i >= 0; i-- {
+		new = append(new, content[i])
+	}
+
+	fmt.Println(new)
 	t := template.Must(template.ParseFiles("index.html"))
-	t.Execute(w, content)
+	t.Execute(w, new)
 
 	defer rows.Close()
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 func createTask(w http.ResponseWriter, r *http.Request) {
 
 	var task Item
 
-	json.NewDecoder(r.Body).Decode(&task)
+	task.Task = r.FormValue("nameName")
+
+	json.NewDecoder(r.Body).Decode(&task.Task)
+
+	fmt.Println(task.Task)
 
 	insert, err := db.Prepare("INSERT INTO user2(task) VALUES (?)")
 	handleErr(err)
@@ -61,14 +76,16 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	_, er := insert.Exec(task.Task)
 	handleErr(er)
 
+	if r.Method == "POST" {
+		http.Redirect(w, r, "http://localhost:3000/", http.StatusSeeOther)
+	}
+
 	fmt.Println("Task Added!")
 
 	defer insert.Close()
-
-	name := task.Task
-	w.Write([]byte("Task Added: "))
-	w.Write([]byte(name))
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 
@@ -80,12 +97,11 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	_, er := delete.Exec(id)
 	handleErr(er)
 
-	fmt.Println("Task deleted!")
-
 	defer delete.Close()
 
-	w.Write([]byte("Task Deleted!"))
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func handleErr(err error) {
 
@@ -107,8 +123,8 @@ func init() {
 }
 
 func main() {
-
-	router.Delete("/delete/{id}", deleteTask)
+	router.Use(render.SetContentType(render.ContentTypeJSON))
+	router.Delete("/", deleteTask)
 	router.Post("/test", createTask)
 	router.Get("/", getTasks)
 
