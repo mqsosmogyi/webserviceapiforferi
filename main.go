@@ -76,13 +76,13 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	_, er := insert.Exec(task.Task)
 	handleErr(er)
 
+	defer insert.Close()
+
 	if r.Method == "POST" {
-		http.Redirect(w, r, "http://localhost:3000/", http.StatusSeeOther)
+		http.Redirect(w, r, "http://localhost:3000/todo", http.StatusSeeOther)
 	}
 
 	fmt.Println("Task Added!")
-
-	defer insert.Close()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +99,9 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 
 	defer delete.Close()
 
+	if r.Method == "POST" {
+		http.Redirect(w, r, "http://localhost:3000/todo", http.StatusSeeOther)
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,9 +127,9 @@ func init() {
 
 func main() {
 	router.Use(render.SetContentType(render.ContentTypeJSON))
-	router.Delete("/", deleteTask)
-	router.Post("/test", createTask)
-	router.Get("/", getTasks)
+	router.Delete("/todo/{id}", deleteTask)
+	router.Post("/todo", createTask)
+	router.Get("/todo", getTasks)
 
 	fmt.Println("Listening...")
 	http.ListenAndServe(":3000", router)
