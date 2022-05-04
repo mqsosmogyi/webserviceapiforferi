@@ -76,32 +76,32 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	_, er := insert.Exec(task.Task)
 	handleErr(er)
 
-	defer insert.Close()
-
-	if r.Method == "POST" {
-		http.Redirect(w, r, "http://localhost:3000/todo", http.StatusSeeOther)
-	}
+	http.Redirect(w, r, "https://f52c-178-48-68-68.eu.ngrok.io/", http.StatusSeeOther)
 
 	fmt.Println("Task Added!")
+
+	defer insert.Close()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 
-	id := chi.URLParam(r, "id")
+	id := r.FormValue("idtask")
+	fmt.Print(id)
 
-	delete, err := db.Prepare("DELETE FROM user2 WHERE id=?")
+	delete, err := db.Prepare("DELETE FROM user2 WHERE (`id` = ?);")
 	handleErr(err)
 
-	_, er := delete.Exec(id)
+	query, er := delete.Exec(id)
+	fmt.Println(query)
 	handleErr(er)
 
 	defer delete.Close()
 
-	if r.Method == "POST" {
-		http.Redirect(w, r, "http://localhost:3000/todo", http.StatusSeeOther)
-	}
+	http.Redirect(w, r, "https://f52c-178-48-68-68.eu.ngrok.io/", http.StatusSeeOther)
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,8 +127,8 @@ func init() {
 
 func main() {
 	router.Use(render.SetContentType(render.ContentTypeJSON))
-	router.Delete("/todo/{id}", deleteTask)
-	router.Post("/todo", createTask)
+	router.Delete("/delete/", deleteTask)
+	router.Post("/test", createTask)
 	router.Get("/", getTasks)
 
 	fmt.Println("Listening...")
