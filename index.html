@@ -26,7 +26,7 @@
     <div class="col-sm-4"></div>
     <div class="col-sm-4">
         <div class="form-group">
-            <form action="/todo" method="POST">
+            <form action="/test" method="POST">
                 <input class="form-control" type="text" id="nameID" name="nameName" value="" placeholder="Enter Task"><br>
                 <button type="submit" class="btn btn-success mb-2">Submit Task</button>
             </form>
@@ -49,7 +49,7 @@
             <tr>
                 <th scope="row">{{ .Id }}</th>
                 <td>{{ .Task }}</td>
-                <td><a href="/{{.Id}}">Delete</a></a></td>
+                <td><a href="/delete/?idtask={{.Id}}">Delete</a></a></td>
             </tr>
             </tbody>{{ end }}
         </table>
